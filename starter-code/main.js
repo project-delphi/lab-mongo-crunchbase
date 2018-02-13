@@ -9,16 +9,50 @@ const rl = readline.createInterface({
 
 const url = `mongodb://localhost:27017/crunchbase`
 
+
 mongoClient.connect(url, (error, db) => {
-  if (error) {
-    console.log('Error trying to connect to the Database');
-    console.log(error);
-  } else {
-    console.log('Connection established correctly!! 😬');
-
-  }
-});
-
+    if (error) {
+      console.log('Error trying to connect to the Database');
+      console.log(error);
+    } else {
+      console.log('Connection established correctly!! 😬');
+  
+      function mainMenu(){
+        clear();
+        printMenu();
+        rl.question('Type an option: ', (option) => {
+          switch(option){
+            case "1":
+            db.collection('companies').find({}, {name: 1, _id: 0}).toArray((error, result) => {
+                if (error) {
+                  console.log(error);
+                  rl.question(`\nType enter to continue: `, (answer) => { mainMenu() });
+                } else {
+                  console.log(result);
+                  rl.question(`\nType enter to continue: `, (answer) => { mainMenu() });
+                }
+              })
+              break;
+            case "2":
+              console.log('you typed 2');
+              rl.question(`\nType enter to continue: `, (answer) => {mainMenu()});
+              break;
+            case "0":
+              console.log(`👋👋👋👋 😞 \n`);
+              db.close((error) => { process.exit(0) });
+              break;
+            default:
+              mainMenu();
+              break;
+          }
+        });
+      }
+  
+      mainMenu();
+  
+    }
+  });
+  
 function printMenu(){
 	console.log(`
 0.- Exit
